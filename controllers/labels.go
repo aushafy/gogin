@@ -4,27 +4,28 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kelseyhightower/envconfig"
+	"github.com/go-sql-driver/mysql"
 )
 
-type Configuration struct {
-	mysql_username string `envconfig:"MYSQL_USERNAME"`
-	mysql_password string `envconfig:"MYSQL_PASSWORD"`
-	mysql_host     string `envconfig:"MYSQL_HOST"`
-	mysql_port     string `envconfig:"MYSQL_PORT"`
-	mysql_database string `envconfig:"MYSQL_DATABASE"`
+type Label struct {
+	ID     int64
+	Book   string
+	Labels string
 }
 
-func getLabels(c *gin.Context) {
-	var s Configuration
-	err := envconfig.Process("conf", &s)
-	if err != nil {
-		log.Fatal(err.Error())
+func GetLabels(c *gin.Context) {
+	cfg := mysql.Config{
+		User:                 os.Getenv("MYSQL_USERNAME"),
+		Passwd:               os.Getenv("MYSQL_PASSWORD"),
+		Net:                  "tcp",
+		Addr:                 os.Getenv("MYSQL_HOST"),
+		DBName:               os.Getenv("MYSQL_DATABASE"),
+		AllowNativePasswords: true,
 	}
-	// "root:example@tcp(mysql:3306)/gogin"
-	db, err := sql.Open("mysql", s.mysql_username+":"+s.mysql_password+"@tcp("+s.mysql_host+":"+s.mysql_port+")/"+s.mysql_database)
+	db, err := sql.Open("mysql", cfg.FormatDSN())
 
 	if err != nil {
 		log.Fatal(err)
@@ -32,13 +33,12 @@ func getLabels(c *gin.Context) {
 
 	defer db.Close()
 
-	var version string
+	var query string
 
-	err2 := db.QueryRow("SELECT VERSION()").Scan(&version)
-
+	err2 := db.QueryRow("SELECT book FROM labels LIMIT 1").Scan(&query)
 	if err2 != nil {
 		log.Fatal(err2)
 	}
 
-	c.String(http.StatusOK, version)
+	c.String(http.StatusOK, query)
 }

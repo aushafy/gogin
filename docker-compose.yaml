@@ -11,8 +11,7 @@ services:
     environment:
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: example
-      MYSQL_HOST: mysql
-      MYSQL_PORT: "3306"
+      MYSQL_HOST: mysql:3306
       MYSQL_DATABASE: gogin
       GIN_MODE: test
   mysql:
@@ -22,6 +21,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: gogin
+      MYSQL_USER: user 
+      MYSQL_PASSWORD: user
     volumes:
       - ./mysql/data:/var/lib/mysql
     ports:
@@ -31,3 +32,6 @@ services:
     restart: always
     ports:
       - 8081:8080
+networks:
+  default:
+    driver: bridge

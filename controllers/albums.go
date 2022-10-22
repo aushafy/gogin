@@ -19,7 +19,7 @@ var albums = []album{
 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
-func getAlbums(c *gin.Context) {
+func GetAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums)
 
 }
