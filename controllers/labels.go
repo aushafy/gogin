@@ -40,5 +40,5 @@ func GetLabels(c *gin.Context) {
 		log.Fatal(err2)
 	}
 
-	c.String(http.StatusOK, query)
+	c.JSON(http.StatusOK, gin.H{"book_name": query})
 }

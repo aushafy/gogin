@@ -11,7 +11,7 @@ var (
 )
 
 func StartApp() {
-	router.GET("/api/v1/labels", controllers.GetLabels)
-	router.GET("/api/v1/albums", controllers.GetAlbums)
+	router.GET("/endpoint", controllers.GetLabels)
+	router.GET("/weather", controllers.GetWeather)
 	router.Run("0.0.0.0:8080")
 }
