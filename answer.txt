@@ -1,0 +1,38 @@
+1. Please create the design architecture in the form of a diagram.
+- please look at diagram.png image in this root directory
+
+2. In addition, also include brief descriptions on the items below : 
+a. List the underlying techstack you believe is required to run the REST API + why
+How you would setup the Database replication:
+    - In GCP Project by default there are default vpc, we used default vpc instead of create new one.
+    - the requirement use docker to deploy a rest api so the stack is Google Compute Engine with 2 total of instances, 1 for API and the other one is for database, for this test I'm not gonna create MYSQL Cluster instead of i create single instance master.
+b. Network Subnet design:
+    - for testing purpose I'm not gonna create VPC because lack of time to do this task, I'm using default VPC
+    - if you need my answer related to network subnet design, I would to create VPC and 1 subnet with /29 prefix CIDR because I would to create 3 instances of API Server and 2 instances of MySQL cluster master slave
+c. Security Groups between network groupings:
+    - in this case i used GCP firewall (similar to Security Group of AWS)
+    - first, create firewall for API Server to accept port 80 or 443. then create firewall for Database, block all ingress from internet (0.0.0.0) then only allowed from internal subnet / VPC Subnet with specific port 3306 (MySQL Port)
+
+3. Terraform script for infrastructure provisioning. The script should be
+organized in such a way that it is Modular, Reusable, Supports Multiple
+Environments and Easily Configurable. The script should provision
+whatever you specify on question number 2.
+
+4. Create the deployment pipeline - preferably in Gitlab CI YAML, but
+Github or Bitbucket pipeline is also acceptable - to perform the tasks
+below :
+a. Run the Terraform script
+b. Create a Dockerfile with Alpine baseimage and install the
+application into the container
+c. Deploy the resulting docker to the targeted instances
+
+5. Your build and deployment in number 4 should be a deterministic
+Docker build with verified image result (sign the image before deploy),
+and the resulting image should be secure and hardened free from any
+kind of CVE
+
+6. Regardless of the provisioning in number 3, you should also provision
+observability mechanics to observe (trace, log. get metrics) from your
+Deployment
+- for this case, because of im using GCE I will use: GCP Ops Agent
+- if this requirement using Kubernetes, I will use: fluentbit, prometheus, loki, grafana
