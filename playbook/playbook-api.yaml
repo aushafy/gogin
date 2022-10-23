@@ -1,5 +1,5 @@
 - name: deploy docker and docker-compose
-  hosts: mysql
+  hosts: api
   connection: ssh
   become: True
   become_user: root
@@ -21,35 +21,38 @@
       - zip
       - unzip
       - wget
+      - ca-certificates
+      - lsb-release
+      - gnupg
       - apt-show-versions
       - apt-transport-https
       - curl
-      - mariadb-server
-      - mariadb-client
       - python3-pip
 
-  - name: Make sure pymysql is present
-    become: true # needed if the other tasks are not played as root
-    pip:
-      name: pymysql
-      state: present
+  - name: Download the docker gpg file to Ubuntu
+    ansible.builtin.command: /bin/mkdir -pv /etc/apt/keyrings
+  
+  - name: Add Docker and docker compose support to the Ubuntu's packages list
+    ansible.builtin.command: /bin/echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-pluginsudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-pluginlinux/ubuntu   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-  - name: run mysqld service
-    service:
-      name: mysql
-      enabled: true
-
-  - name: Create a new database for wordpress
-    community.mysql.mysql_db:
-      name: gogin
-      state: present
-      login_unix_socket: /run/mysqld/mysqld.sock
+  - name: update apt-get using traditional command
+    action: shell apt-get update
 
   - name: get latest version of ops agent for monitoring log and metrics
     ansible.builtin.get_url:
       url: https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
       dest: /tmp
   
+  - name: install docker and etc
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+ 
   - name: install ops agent
     ansible.builtin.command: /bin/bash /tmp/add-google-cloud-ops-agent-repo.sh --also-install
 

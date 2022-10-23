@@ -39,7 +39,7 @@
       name: mysql
       enabled: true
 
-  - name: Create a new database for wordpress
+  - name: Create a new database for api service
     community.mysql.mysql_db:
       name: gogin
       state: present
