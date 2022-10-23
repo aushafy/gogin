@@ -14,4 +14,10 @@ $ mysql -h 127.0.0.1 -D gogin -u root -p < migration.sql
 
 *Testing by curl app endpoints*
 
-$ curl -X GET http://localhost:8080/api/v1/labels
+$ curl -X GET http://localhost:8080/endpoint
+$ curl -X GET http://localhost:8080/weather
+
+$ cd terraform
+
+$ terraform init
+
