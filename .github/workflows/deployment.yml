@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  terraform:
-    name: 'Infrastructure provisioning with terraform'
+  deployment:
+    name: 'CI/CD With terraform and docker'
     runs-on: ubuntu-latest
     environment: production
     defaults:
@@ -30,29 +30,17 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
       run: cd terraform && terraform apply -auto-approve -input=false
-
-  docker:
-    name: 'Docker build and push to docker hub'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag aushafy/gogin:latest
     - name: Login to docker hub
       run: docker login --username aushafy --password ${{ secrets.DOCKER_REGISTRY_TOKEN }}
     - name: Push to registry
       run: docker push aushafy/gogin:latest
-  
-  deploy:
-    name: 'Deploy docker image with docker-compose'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: deploy docker from docker hub
       uses: fifsky/ssh-action@master
       with:
         command: |
           sudo docker run -d -p 8080:8080 aushafy/gogin:latest
-        host: ${{ secrets.EC2_HOST }}
-        user: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: 35.240.192.155
+        user: aushafy
+        key: ${{ secrets.SSH_PRIVATE_KEY }} 
