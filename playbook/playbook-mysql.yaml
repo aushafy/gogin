@@ -1,0 +1,59 @@
+- name: deploy mysql
+  hosts: mysql
+  connection: ssh
+  become: True
+  become_user: root
+
+  tasks:
+  - name: Update apt
+    apt: update_cache=yes
+
+  - name: update apt-get using traditional command
+    action: shell apt-get update
+
+  - name: install required basic packages
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - vim
+      - git
+      - zip
+      - unzip
+      - wget
+      - apt-show-versions
+      - apt-transport-https
+      - curl
+      - mariadb-server
+      - mariadb-client
+      - python3-pip
+
+  - name: Make sure pymysql is present
+    become: true # needed if the other tasks are not played as root
+    pip:
+      name: pymysql
+      state: present
+
+  - name: run mysqld service
+    service:
+      name: mysql
+      enabled: true
+
+  - name: Create a new database for wordpress
+    community.mysql.mysql_db:
+      name: gogin
+      state: present
+      login_unix_socket: /run/mysqld/mysqld.sock
+
+  - name: get latest version of ops agent for monitoring log and metrics
+    ansible.builtin.get_url:
+      url: https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+      dest: /tmp
+  
+  - name: install ops agent
+    ansible.builtin.command: /bin/bash /tmp/add-google-cloud-ops-agent-repo.sh --also-install
+
+  - name: run cloud ops agent service
+    service:
+      name: google-cloud-ops-agent
+      enabled: true
