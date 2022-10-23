@@ -5,11 +5,11 @@
   become_user: root
 
   tasks:
-  # - name: Update apt
-  #   apt: update_cache=yes
+  - name: Update apt
+    apt: update_cache=yes
 
-  # - name: update apt-get using traditional command
-  #   action: shell apt-get update
+  - name: update apt-get using traditional command
+    action: shell apt-get update
 
   - name: install required basic packages
     apt:
@@ -29,14 +29,15 @@
       - curl
       - python3-pip
 
-  - name: Download the docker gpg file to Ubuntu
-    ansible.builtin.command: /bin/mkdir -pv /etc/apt/keyrings
+  # TODO: Need to fix issue 
+  # - name: Download the docker gpg file to Ubuntu
+  #   ansible.builtin.command: /bin/mkdir -pv /etc/apt/keyrings
 
-  - name: Download docker script
-    ansible.builtin.command: curl -fsSL https://get.docker.com -o get-docker.sh
+  # - name: Download docker script
+  #   ansible.builtin.command: curl -fsSL https://get.docker.com -o get-docker.sh
   
-  - name: setup docker with script
-    ansible.builtin.command: /bin/bash ./get-docker.sh
+  # - name: setup docker with script
+  #   ansible.builtin.command: /bin/bash ./get-docker.sh
 
   - name: get latest version of ops agent for monitoring log and metrics
     ansible.builtin.get_url:

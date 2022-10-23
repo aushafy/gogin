@@ -1,1 +1,18 @@
-# docker compose for deployment example not for running in the local
+version: "3.1"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aushafy/gogin:latest
+    restart: always
+    ports:
+      - 80:8080
+    environment:
+      MYSQL_USERNAME: usermig
+      MYSQL_PASSWORD: usermig
+      MYSQL_HOST: 10.148.0.44:3306
+      MYSQL_DATABASE: gogin
+      GIN_MODE: test
+      API_KEY: a568e7ffcbmshb9cfb3af67b3884p175b70jsn8b59b6c0763a
+      API_HOST: weatherbit-v1-mashape.p.rapidapi.com
