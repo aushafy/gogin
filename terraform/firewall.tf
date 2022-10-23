@@ -16,7 +16,7 @@ module "firewall_rules" {
         target_service_accounts = null
         allow = [{
         protocol = "tcp"
-        ports    = ["80","443"]
+        ports    = ["22","80","443"]
         }]
         deny = []
         log_config = {
@@ -36,6 +36,25 @@ module "firewall_rules" {
         allow = [{
         protocol = "tcp"
         ports    = ["3306"]
+        }]
+        deny = []
+        log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+        }
+    },
+    {
+        name                    = "allow-ssh-ingress-temp"
+        description             = "allow ssh access from internet"
+        direction               = "INGRESS"
+        priority                = 1000
+        ranges                  = ["0.0.0.0/0"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = ["allow-mysql"]
+        target_service_accounts = null
+        allow = [{
+        protocol = "tcp"
+        ports    = ["22"]
         }]
         deny = []
         log_config = {
