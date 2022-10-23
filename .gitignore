@@ -2,3 +2,4 @@ notes
 mysql/data
 */service-account.json
 */.terraform*
+stg.docker-compose.yaml
