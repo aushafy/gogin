@@ -40,8 +40,7 @@ jobs:
       uses: fifsky/ssh-action@master
       with:
         command: |
-          wget https://raw.githubusercontent.com/aushafy/gogin/main/migration.sql && wget https://raw.githubusercontent.com/aushafy/gogin/main/staging.docker-compose.yaml.gpg && gpg --quiet --batch --yes --decrypt --passphrase="$SERVICE_ACCOUNT_PASSPHRASE" \
---output staging.docker-compose.yaml staging.docker-compose.yaml.gpg && mysql -h 10.148.0.44 -D gogin -u usermig -p${{ secrets.MYSQL_PASS }} < migration.sql && sudo docker-compose -f staging.docker-compose.yaml up -d && sudo docker-compose restart
+          wget https://raw.githubusercontent.com/aushafy/gogin/main/migration.sql && wget https://raw.githubusercontent.com/aushafy/gogin/main/staging.docker-compose.yaml.gpg && gpg --quiet --batch --yes --decrypt --passphrase="$SERVICE_ACCOUNT_PASSPHRASE" \ --output staging.docker-compose.yaml staging.docker-compose.yaml.gpg && mysql -h 10.148.0.44 -D gogin -u usermig -p${{ secrets.MYSQL_PASS }} < migration.sql && sudo docker-compose -f staging.docker-compose.yaml up -d && sudo docker-compose restart
         host: 35.240.192.155
         user: aushafy
         key: ${{ secrets.SSH_PRIVATE_KEY }} 
